@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">        
+        <h1>{{ titulo | uppercase }}</h1>
+        <h2>{{ subtitulo | capitalize }}</h2>
+
+
+        <button @click="sumar">Sumar 1</button>
+        <button @click="restar">Restar 1</button>
+        El contador está en {{ contador }}
+
+        <div id="inputs">
+            <input type="text" name="nombre" id="nombre" placeholder="Ingresa tu nombre" v-model="nombre">
+            <p>Tu nombre en mayúscula es: {{ nombre | uppercase }}</p>
+
+            <form @submit.prevent='submit' action="">
+                <h2>Curso favorito?</h2>
+                <template v-for='curso in cursos'>
+                    <curso :curso='curso' v-on:checked="selectCurso"></curso>
+                </template>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+        Vue.component('curso', {
+            props: ['curso'],
+            methods: {
+                onchange: function (ev) {
+                    this.$emit('checked', this.curso.value, ev.target.checked)
+                }
+            },
+            template:`
+            <div>
+                <input type="checkbox" :id="curso.value" :value="curso.value" @change="onchange">
+                <label :for="curso.value">{{ curso.nombre }}</label>
+            </div>
+            `
+        })
+        let app = new Vue({
+            el: '#app',
+            data: {
+                titulo: 'VidalDev',
+                subtitulo: 'Practicando con Vue',
+                contador: 0,
+                nombre: '',
+                cursos: [
+                    { 
+                        nombre: 'Curso de Vue.js',
+                        value: 'vue' 
+                    },
+                    {
+                        nombre: 'Curso de SEO',
+                        value: 'seo'
+                    },
+                    {
+                        nombre: 'Curso de React',
+                        value: 'react'
+                    },
+                    {
+                        nombre: 'Curso de Git & Github',
+                        value: 'git'
+                    },
+                ],
+                cursosSeleccionados: []
+            },
+            filters: {
+                uppercase: function (str) {
+                    return str.toUpperCase()
+                },
+                lowercase: function (str) {
+                    return str.toLowerCase()
+                },
+                capitalize: function (str) {
+                    return str.charAt(0).toUpperCase() + str.slice(1);
+                }
+            },
+            methods: {
+                sumar: function () {
+                    this.contador++
+                },
+                restar: function () {
+                    this.contador--
+                },
+                submit: function () {
+                    console.log('Se ejecutó');
+                    console.log(this.cursosSeleccionados)
+                },
+                selectCurso: function (curso, checked) {
+                    if (checked) {
+                        this.cursosSeleccionados.push(curso)
+                    } else {
+                        let i = this.cursosSeleccionados.indexOf(curso)
+                        this.cursosSeleccionados.splice(i, 1)
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
